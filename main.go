@@ -15,23 +15,26 @@ func main() {
 	pin.Input()
 
 	st := make(chan rpio.State)
-	go func(st chan rpio.State) {
-		old := rpio.High
-		for {
-			res := pin.Read()
-			if res != old {
-				st <- res
-				old = res
-			}
-
-			time.Sleep(1 * time.Second)
-		}
-	}(st)
+	go waiting_pin(pin, st)
 	for {
 		select {
 		case res := <-st:
 			fmt.Println(res)
 		default:
 		}
+	}
+	close(st)
+}
+
+func waiting_pin(pin rpio.Pin, st chan rpio.State) {
+	old := rpio.High
+	for {
+		res := pin.Read()
+		if res != old {
+			st <- res
+			old = res
+		}
+
+		time.Sleep(1 * time.Second)
 	}
 }
