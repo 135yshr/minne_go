@@ -16,5 +16,7 @@ func main() {
 	for {
 		res := pin.Read()
 		fmt.Println(res)
+
+		time.Sleep(1 * time.Second)
 	}
 }
